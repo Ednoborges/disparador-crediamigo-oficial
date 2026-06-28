@@ -1,4 +1,3 @@
-​
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -855,23 +854,6 @@ _*Condições sujeitas à análise de crédito._</textarea>
   🛡️ <strong style="color:white;">Disparador CrediAmigo Oficial</strong> — Desenvolvido por <strong style="color:#FFD700;">Edno Rotondano Borges</strong> · Coordenador CrediAmigo / Banco do Nordeste · Jequié-BA &nbsp;|&nbsp; © 2026 · Todos os direitos reservados &nbsp;|&nbsp; Criado em junho de 2026
 </div>
 
-<!-- MODAL CONFIRMAÇÃO -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-icon">📲</div>
-    <h3>Confirmar envio para</h3>
-    <p id="modalClienteNome" style="font-weight:700; color:var(--texto); font-size:1rem; margin-bottom:4px;"></p>
-    <p id="modalClienteTel" style="color:var(--texto-suave); margin-bottom:12px;"></p>
-    <div class="modal-wa-msg" id="modalMsg"></div>
-    <p style="font-size:0.75rem; background:#FFF9E6; padding:8px 12px; border-radius:8px; border:1px solid #FFE082; margin-bottom:16px;">
-      ⚡ A mensagem foi copiada. Cole no WhatsApp Web e pressione <strong>Enter</strong> para enviar.
-    </p>
-    <div class="modal-btns">
-      <button class="btn-cancel-modal" onclick="pularAtual()">⏭ Pular</button>
-      <button class="btn-confirm" onclick="confirmarEnvio()">✅ Enviado!</button>
-    </div>
-  </div>
-</div>
 
 <script>
 // ===== MODELOS DE MENSAGEM =====
@@ -1319,31 +1301,12 @@ async function processarProximo() {
   intervaloTimer = setTimeout(() => { processarProximo(); }, intervalo);
 }
 
-function confirmarEnvio() {
-  const cliente = clientes[indiceAtual];
-  cliente.status = 'enviado';
-  totalEnviados++;
-  document.getElementById('modalOverlay').classList.remove('show');
-  aguardandoConfirmacao = false;
-  adicionarLog(`✅ Enviado: ${cliente.nome}`, 'ok');
-  atualizarStats();
-  renderizarTabela();
-  indiceAtual++;
 
-  const intervalo = calcularIntervalo();
-  adicionarLog(`⏱ Aguardando ${intervalo/1000}s antes do próximo...`, 'warn');
-
-  intervaloTimer = setTimeout(() => {
-    processarProximo();
-  }, intervalo);
-}
 
 function pularAtual() {
   const cliente = clientes[indiceAtual];
   cliente.status = 'pulado';
   totalPulados++;
-  document.getElementById('modalOverlay').classList.remove('show');
-  aguardandoConfirmacao = false;
   adicionarLog(`⏭ Pulado: ${cliente.nome}`, 'warn');
   atualizarStats();
   renderizarTabela();
@@ -1383,7 +1346,6 @@ function pararDisparo() {
   disparando = false;
   pausado = false;
   clearTimeout(intervaloTimer);
-  document.getElementById('modalOverlay').classList.remove('show');
   document.getElementById('btnIniciar').style.display = 'block';
   document.getElementById('btnPausar').style.display = 'none';
   document.getElementById('btnResumir').style.display = 'none';
@@ -1462,4 +1424,3 @@ atualizarPreview();
 </script>
 </body>
 </html>
-
