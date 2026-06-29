@@ -7,695 +7,877 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-// ===== RASTREAMENTO DE USO — Disparador CrediAmigo Oficial =====
-// Autor: Edno Rotondano Borges | Junho/2026
 (function() {
-  try {
-    emailjs.init('D7ayyomunahEibvZV');
-
-    const agora = new Date();
-    const params = {
-      data: agora.toLocaleDateString('pt-BR'),
-      hora: agora.toLocaleTimeString('pt-BR'),
-      sistema: navigator.platform || 'Desconhecido',
-      navegador: navigator.userAgent.substring(0, 120)
-    };
-
-    emailjs.send('service_mw0eh0p', 'rki3mej', params)
-      .then(() => console.log('%c📧 Alerta de acesso enviado para ednoborges@gmail.com', 'color:#00875A; font-weight:bold;'))
-      .catch(() => {});
-
-  } catch(e) {}
+try {
+emailjs.init('D7ayyomunahEibvZV');
+const agora = new Date();
+emailjs.send('service_mw0eh0p', 'rki3mej', {
+data: agora.toLocaleDateString('pt-BR'),
+hora: agora.toLocaleTimeString('pt-BR'),
+sistema: navigator.platform || 'Desconhecido',
+navegador: navigator.userAgent.substring(0, 120)
+}).catch(() => {});
+} catch(e) {}
 })();
 </script>
 <style>
-  :root {
-    --verde: #00875A;
-    --verde-escuro: #005C3B;
-    --verde-claro: #E3F5EC;
-    --amarelo: #F5A623;
-    --vermelho: #D0021B;
-    --cinza: #F4F6F8;
-    --borda: #DCE1E7;
-    --texto: #1A2330;
-    --texto-suave: #5A6475;
-    --branco: #FFFFFF;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #EBF0F5;
-    color: var(--texto);
-    min-height: 100vh;
-  }
-
-  /* HEADER */
-  .header {
-    background: linear-gradient(135deg, var(--verde-escuro) 0%, var(--verde) 100%);
-    color: white;
-    padding: 18px 28px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 3px 15px rgba(0,87,58,0.35);
-  }
-  .header-logo {
-    width: 46px; height: 46px;
-    background: rgba(255,255,255,0.18);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-  }
-  .header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.3px; }
-  .header p { font-size: 0.78rem; opacity: 0.78; margin-top: 1px; }
-  .header-badge {
-    margin-left: auto;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 0.72rem;
-    font-weight: 600;
-  }
-
-  /* LAYOUT */
-  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
-  .grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; align-items: start; }
-
-  /* CARDS */
-  .card {
-    background: var(--branco);
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    overflow: hidden;
-  }
-  .card-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--borda);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .card-header h2 { font-size: 0.95rem; font-weight: 700; }
-  .card-header .icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .icon-green { background: var(--verde-claro); }
-  .icon-orange { background: #FFF3E0; }
-  .icon-blue { background: #E8F0FE; }
-  .card-body { padding: 20px; }
-
-  /* UPLOAD */
-  .upload-zone {
-    border: 2px dashed var(--borda);
-    border-radius: 10px;
-    padding: 28px 20px;
-    text-align: center;
-    cursor: pointer;
-    background: var(--cinza);
-  }
-  .upload-zone:hover, .upload-zone.dragover {
-    border-color: var(--verde);
-    background: var(--verde-claro);
-  }
-  .upload-zone .big-icon { font-size: 36px; margin-bottom: 8px; }
-  #fileInput { display: none; }
-
-  /* STATS BAR */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .stat {
-    background: var(--cinza);
-    border-radius: 10px;
-    padding: 12px;
-    text-align: center;
-  }
-  .stat-num { font-size: 1.5rem; font-weight: 800; color: var(--verde); line-height: 1; }
-  .stat-label { font-size: 0.7rem; color: var(--texto-suave); margin-top: 3px; }
-  .stat.warn .stat-num { color: var(--amarelo); }
-  .stat.danger .stat-num { color: var(--vermelho); }
-  .stat.info .stat-num { color: #1A73E8; }
-
-  /* FILTROS */
-  .filtros {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-  .filtros select, .filtros input {
-    padding: 7px 12px;
-    border: 1px solid var(--borda);
-    border-radius: 8px;
-    font-size: 0.82rem;
-    outline: none;
-    background: white;
-  }
-
-  /* TABELA */
-  .table-wrap { overflow-x: auto; border: 1px solid var(--borda); border-radius: 10px; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  th {
-    background: var(--cinza);
-    padding: 10px 12px;
-    text-align: left;
-    font-weight: 700;
-    font-size: 0.75rem;
-    color: var(--texto-suave);
-    text-transform: uppercase;
-    border-bottom: 1px solid var(--borda);
-  }
-  td { padding: 9px 12px; border-bottom: 1px solid #F0F2F5; vertical-align: middle; }
-  tr.enviado td { opacity: 0.45; }
-
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
-  .badge-sent { background: #E8F5E9; color: #2E7D32; }
-  .badge-pending { background: #F5F5F5; color: #616161; }
-
-  .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-top: 1px solid var(--borda);
-    font-size: 0.8rem;
-    color: var(--texto-suave);
-  }
-  .page-btns { display: flex; gap: 6px; }
-
-  /* SIDE PANEL */
-  .side-panel { display: flex; flex-direction: column; gap: 16px; }
-
-  .msg-editor {
-    width: 100%;
-    min-height: 220px;
-    padding: 12px;
-    border: 1px solid var(--borda);
-    border-radius: 10px;
-    font-size: 0.84rem;
-    line-height: 1.6;
-    resize: vertical;
-    outline: none;
-    font-family: inherit;
-    color: var(--texto);
-  }
-
-  .vars-hint {
-    background: #E8F0FE;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 0.75rem;
-    color: #1A73E8;
-    margin-top: 8px;
-  }
-  .var-chip {
-    display: inline-block;
-    background: #1A73E8;
-    color: white;
-    border-radius: 4px;
-    padding: 1px 6px;
-    font-size: 0.7rem;
-    cursor: pointer;
-    margin: 2px 2px 2px 0;
-  }
-
-  .preview-bubble {
-    background: #DCF8C6;
-    border-radius: 12px 12px 0 12px;
-    padding: 12px 14px;
-    font-size: 0.82rem;
-    line-height: 1.65;
-    white-space: pre-wrap;
-    word-break: break-word;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-  }
-
-  .config-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .config-row label { font-size: 0.82rem; font-weight: 600; }
-  .config-row small { font-size: 0.72rem; color: var(--texto-suave); display: block; }
-
-  input[type="range"] { -webkit-appearance: none; width: 130px; height: 4px; background: var(--borda); border-radius: 4px; outline: none; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--verde); cursor: pointer; }
-  .range-val { font-size: 0.78rem; font-weight: 700; color: var(--verde); min-width: 36px; text-align: right; }
-
-  .toggle { position: relative; width: 40px; height: 22px; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; background: #CBD5E0; border-radius: 22px; cursor: pointer; transition: background 0.2s; }
-  .toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.2s; }
-  .toggle input:checked + .toggle-slider { background: var(--verde); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
-
-  .btn-primary {
-    width: 100%; padding: 14px;
-    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-escuro) 100%);
-    color: white; border: none; border-radius: 10px;
-    font-size: 1rem; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: 0 4px 15px rgba(0,87,58,0.3);
-  }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .btn-secondary { width: 100%; padding: 10px; background: white; color: var(--texto); border: 1px solid var(--borda); border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; }
-  .btn-danger { width: 100%; padding: 10px; background: #FFEBEE; color: var(--vermelho); border: 1px solid #FFCDD2; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; display: none; }
-
-  .progress-section { display: none; }
-  .progress-bar-wrap { background: var(--borda); border-radius: 20px; height: 12px; overflow: hidden; margin: 10px 0; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--verde), #34A853); border-radius: 20px; transition: width 0.4s ease; width: 0%; }
-  .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--texto-suave); }
-  .current-sending { background: var(--verde-claro); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; margin-top: 8px; font-weight: 600; color: var(--verde-escuro); }
-
-  .log-box { background: #0D1117; border-radius: 8px; padding: 12px; height: 120px; overflow-y: auto; font-family: monospace; font-size: 0.72rem; color: #58A6FF; margin-top: 10px; }
-  .log-line { margin-bottom: 4px; }
-  .log-ok { color: #56D364; }
-
-  .empty-state { text-align: center; padding: 48px 20px; color: var(--texto-suave); }
-  .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
-  .alert { padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 12px; display: none; }
-  .alert-warn { background: #FFF3E0; border: 1px solid #FFE082; color: #E65100; }
-
-  @media (max-width: 768px) {
-    .grid { grid-template-columns: 1fr; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-    .side-panel { order: -1; }
-  }
+:root {
+--verde: #00875A;
+--verde-escuro: #005C3B;
+--verde-claro: #E3F5EC;
+--amarelo: #F5A623;
+--vermelho: #D0021B;
+--cinza: #F4F6F8;
+--borda: #DCE1E7;
+--texto: #1A2330;
+--texto-suave: #5A6475;
+--branco: #FFFFFF;
+--shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #EBF0F5; color: var(--texto); min-height: 100vh; }
+.header {
+background: linear-gradient(135deg, var(--verde-escuro) 0%, var(--verde) 100%);
+color: white; padding: 18px 28px;
+display: flex; align-items: center; gap: 14px;
+box-shadow: 0 3px 15px rgba(0,87,58,0.35);
+}
+.header-logo { width:46px; height:46px; background:rgba(255,255,255,0.18); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; }
+.header h1 { font-size:1.25rem; font-weight:700; }
+.header p { font-size:0.78rem; opacity:0.78; margin-top:1px; }
+.header-badge { margin-left:auto; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); border-radius:20px; padding:4px 12px; font-size:0.72rem; font-weight:600; }
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+.grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; align-items: start; }
+.card { background: var(--branco); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.card-header { padding:16px 20px; border-bottom:1px solid var(--borda); display:flex; align-items:center; gap:10px; }
+.card-header h2 { font-size:0.95rem; font-weight:700; }
+.card-header .icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.icon-green { background: var(--verde-claro); }
+.icon-orange { background: #FFF3E0; }
+.icon-blue { background: #E8F0FE; }
+.card-body { padding: 20px; }
+.upload-zone { border:2px dashed var(--borda); border-radius:10px; padding:28px 20px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--cinza); }
+.upload-zone:hover, .upload-zone.dragover { border-color:var(--verde); background:var(--verde-claro); }
+.upload-zone .big-icon { font-size:36px; margin-bottom:8px; }
+.upload-zone p { font-size:0.88rem; color:var(--texto-suave); }
+.upload-zone strong { color:var(--verde); }
+#fileInput { display:none; }
+.stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+.stat { background:var(--cinza); border-radius:10px; padding:12px; text-align:center; }
+.stat-num { font-size:1.5rem; font-weight:800; color:var(--verde); line-height:1; }
+.stat-label { font-size:0.7rem; color:var(--texto-suave); margin-top:3px; }
+.stat.warn .stat-num { color:var(--amarelo); }
+.stat.info .stat-num { color:#1A73E8; }
+.filtros { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.filtros select, .filtros input { padding:7px 12px; border:1px solid var(--borda); border-radius:8px; font-size:0.82rem; outline:none; background:white; }
+.filtros select:focus, .filtros input:focus { border-color:var(--verde); }
+.btn-filtrar { padding:7px 14px; background:var(--verde); color:white; border:none; border-radius:8px; font-size:0.82rem; cursor:pointer; font-weight:600; }
+.btn-filtrar:hover { background:var(--verde-escuro); }
+.table-wrap { overflow-x:auto; border:1px solid var(--borda); border-radius:10px; }
+table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+th { background:var(--cinza); padding:10px 12px; text-align:left; font-weight:700; font-size:0.75rem; color:var(--texto-suave); text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--borda); white-space:nowrap; }
+td { padding:9px 12px; border-bottom:1px solid #F0F2F5; vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:#FAFBFC; }
+tr.enviado td { opacity:0.45; }
+tr.enviando td { background:#FFFDE7; }
+.badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:700; }
+.badge-ok { background:var(--verde-claro); color:var(--verde-escuro); }
+.badge-warn { background:#FFF3E0; color:#E65100; }
+.badge-danger { background:#FFEBEE; color:var(--vermelho); }
+.badge-sent { background:#E8F5E9; color:#2E7D32; }
+.badge-pending { background:#F5F5F5; color:#616161; }
+.badge-skip { background:#ECEFF1; color:#78909C; }
+.badge-current { background:#FFF9C4; color:#F57F17; border:1px solid #F9A825; }
+.pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-top:1px solid var(--borda); font-size:0.8rem; color:var(--texto-suave); }
+.page-btns { display:flex; gap:6px; }
+.page-btns button { padding:5px 10px; border:1px solid var(--borda); border-radius:6px; background:white; cursor:pointer; font-size:0.78rem; }
+.page-btns button:hover { background:var(--cinza); }
+.page-btns button.active { background:var(--verde); color:white; border-color:var(--verde); }
+.side-panel { display:flex; flex-direction:column; gap:16px; }
+.msg-editor { width:100%; min-height:200px; padding:12px; border:1px solid var(--borda); border-radius:10px; font-size:0.84rem; line-height:1.6; resize:vertical; outline:none; font-family:inherit; color:var(--texto); }
+.msg-editor:focus { border-color:var(--verde); }
+.vars-hint { background:#E8F0FE; border-radius:8px; padding:10px 12px; font-size:0.75rem; color:#1A73E8; margin-top:8px; }
+.vars-hint strong { font-weight:700; }
+.var-chip { display:inline-block; background:#1A73E8; color:white; border-radius:4px; padding:1px 6px; font-size:0.7rem; cursor:pointer; margin:2px 2px 2px 0; }
+.var-chip:hover { background:#1558B0; }
+.preview-bubble { background:#DCF8C6; border-radius:12px 12px 0 12px; padding:12px 14px; font-size:0.82rem; line-height:1.65; white-space:pre-wrap; word-break:break-word; position:relative; box-shadow:0 1px 3px rgba(0,0,0,0.12); }
+.preview-bubble::after { content:''; position:absolute; bottom:0; right:-8px; width:0; height:0; border:8px solid transparent; border-top-color:#DCF8C6; border-right:none; }
+.preview-meta { text-align:right; font-size:0.68rem; color:var(--texto-suave); margin-top:4px; }
+.config-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.config-row label { font-size:0.82rem; font-weight:600; }
+.config-row small { font-size:0.72rem; color:var(--texto-suave); display:block; }
+input[type="range"] { -webkit-appearance:none; width:130px; height:4px; border-radius:4px; background:var(--borda); outline:none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--verde); cursor:pointer; }
+.range-val { font-size:0.78rem; font-weight:700; color:var(--verde); min-width:36px; text-align:right; }
+.toggle-wrap { display:flex; align-items:center; gap:8px; }
+.toggle { position:relative; width:40px; height:22px; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; inset:0; background:#CBD5E0; border-radius:22px; cursor:pointer; transition:background 0.2s; }
+.toggle-slider::before { content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:white; border-radius:50%; transition:transform 0.2s; }
+.toggle input:checked + .toggle-slider { background:var(--verde); }
+.toggle input:checked + .toggle-slider::before { transform:translateX(18px); }
+.btn-primary { width:100%; padding:14px; background:linear-gradient(135deg,var(--verde),var(--verde-escuro)); color:white; border:none; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; box-shadow:0 4px 15px rgba(0,87,58,0.3); }
+.btn-primary:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,87,58,0.4); }
+.btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.btn-secondary { width:100%; padding:10px; background:white; color:var(--texto); border:1px solid var(--borda); border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.2s; margin-top:8px; }
+.btn-secondary:hover { background:var(--cinza); }
+.btn-danger { width:100%; padding:10px; background:#FFEBEE; color:var(--vermelho); border:1px solid #FFCDD2; border-radius:10px; font-size:0.85rem; font-weight:600; cursor:pointer; transition:all 0.2s; margin-top:8px; display:none; }
+.btn-danger:hover { background:#FFCDD2; }
+/* PAINEL DE AÇÃO CENTRAL — aparece durante o disparo */
+.action-panel {
+display: none;
+background: #F0FBF6;
+border: 2px solid var(--verde-claro);
+border-radius: 14px;
+padding: 16px;
+margin-top: 10px;
+text-align: center;
+}
+.action-panel.visible { display: block; }
+.action-panel .action-nome {
+font-size: 0.78rem;
+color: var(--texto-suave);
+margin-bottom: 4px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.4px;
+}
+.action-panel .action-tel {
+font-size: 1rem;
+font-weight: 800;
+color: var(--verde-escuro);
+margin-bottom: 14px;
+}
+.action-panel .action-btns {
+display: flex;
+gap: 10px;
+}
+.btn-enviado {
+flex: 2;
+padding: 16px 10px;
+background: linear-gradient(135deg, var(--verde), var(--verde-escuro));
+color: white;
+border: none;
+border-radius: 10px;
+font-size: 1.05rem;
+font-weight: 800;
+cursor: pointer;
+box-shadow: 0 4px 15px rgba(0,87,58,0.35);
+transition: all 0.2s;
+letter-spacing: 0.2px;
+}
+.btn-enviado:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,87,58,0.45); }
+.btn-pular {
+flex: 1;
+padding: 16px 10px;
+background: #FFF3E0;
+color: #E65100;
+border: 1.5px solid #FFE082;
+border-radius: 10px;
+font-size: 0.9rem;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.2s;
+}
+.btn-pular:hover { background:#FFE0B2; }
+/* COUNTDOWN */
+.countdown-bar {
+display: none;
+margin-top: 12px;
+background: var(--cinza);
+border-radius: 8px;
+padding: 10px 14px;
+font-size: 0.8rem;
+color: var(--texto-suave);
+text-align: center;
+}
+.countdown-bar.visible { display: block; }
+.countdown-fill-wrap { background: var(--borda); border-radius: 20px; height: 6px; overflow:hidden; margin-top:6px; }
+.countdown-fill { height:100%; background: linear-gradient(90deg, var(--verde), #34A853); border-radius:20px; transition: width 1s linear; }
+.progress-section { display: none; }
+.progress-bar-wrap { background:var(--borda); border-radius:20px; height:12px; overflow:hidden; margin:10px 0; }
+.progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--verde),#34A853); border-radius:20px; transition:width 0.4s ease; width:0%; }
+.progress-label { display:flex; justify-content:space-between; font-size:0.75rem; color:var(--texto-suave); }
+.clipboard-hint { display:none; background:#FFF8E1; border:1px solid #FFE082; border-radius:8px; padding:8px 12px; font-size:0.75rem; color:#E65100; margin-top:8px; line-height:1.5; }
+.log-box { background:#0D1117; border-radius:8px; padding:12px; height:100px; overflow-y:auto; font-family:'Courier New',monospace; font-size:0.72rem; color:#58A6FF; margin-top:10px; }
+.log-box .log-line { margin-bottom:4px; line-height:1.4; }
+.log-box .log-ok { color:#56D364; }
+.log-box .log-warn { color:#E3B341; }
+.log-box .log-err { color:#F85149; }
+.empty-state { text-align:center; padding:48px 20px; color:var(--texto-suave); }
+.empty-state .emoji { font-size:48px; margin-bottom:12px; }
+.empty-state p { font-size:0.88rem; line-height:1.6; }
+.alert { padding:10px 14px; border-radius:8px; font-size:0.8rem; margin-bottom:12px; display:none; }
+.alert-warn { background:#FFF3E0; border:1px solid #FFE082; color:#E65100; }
+.alert-info { background:#E8F0FE; border:1px solid #AECBFA; color:#1A73E8; }
+.alert-success { background:var(--verde-claro); border:1px solid #A8DFCA; color:var(--verde-escuro); }
+@media (max-width: 768px) {
+.grid { grid-template-columns: 1fr; }
+.stats-bar { grid-template-columns: repeat(2,1fr); }
+.side-panel { order: -1; }
+.btn-enviado { font-size: 1.1rem; padding: 18px 10px; }
+}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <div class="header">
-  <div class="header-logo">🚀</div>
-  <div>
-    <h1>Disparador CrediAmigo</h1>
-    <p>Campanha de recuperação de ex-clientes via WhatsApp</p>
-  </div>
-  <div class="header-badge" id="statusBadge">⬤ Aguardando</div>
+<div class="header-logo">🚀</div>
+<div>
+<h1>Disparador CrediAmigo</h1>
+<p>Campanha de recuperação de ex-clientes via WhatsApp</p>
 </div>
-
+<div class="header-badge" id="statusBadge">⬤ Aguardando</div>
+</div>
 <div class="container">
-  <div class="grid">
-
-    <!-- COLUNA ESQUERDA -->
-    <div>
-      <div class="card" id="uploadCard" style="margin-bottom:16px;">
-        <div class="card-header">
-          <div class="icon icon-green">📂</div>
-          <h2>Adicionar Clientes</h2>
-        </div>
-        <div class="card-body">
-          <div style="display:flex; gap:8px; margin-bottom:16px;">
-            <button id="abaExcel" onclick="trocarAba('excel')" style="flex:1; padding:9px; border-radius:8px; border:2px solid var(--verde); background:var(--verde); color:white; font-size:0.82rem; font-weight:700; cursor:pointer;">📊 Importar Excel</button>
-            <button id="abaManual" onclick="trocarAba('manual')" style="flex:1; padding:9px; border-radius:8px; border:2px solid var(--borda); background:white; color:var(--texto-suave); font-size:0.82rem; font-weight:700; cursor:pointer;">✏️ Adicionar Manual</button>
-          </div>
-
-          <div id="painelExcel">
-            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-              <div class="big-icon">📊</div>
-              <p><strong>Clique para importar</strong> ou arraste o arquivo Excel aqui</p>
-              <p style="margin-top:6px; font-size:0.75rem;">Suporta .xlsx · Colunas: Cliente, Telefone, Valor, Atraso</p>
-            </div>
-            <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(event)">
-          </div>
-
-          <div id="painelManual" style="display:none;">
-            <div style="margin-bottom:10px;">
-              <label style="font-size:0.78rem; font-weight:700; color:var(--texto-suave); display:block; margin-bottom:4px;">Telefones * (um por linha, com DDD)</label>
-              <textarea id="inputTel" placeholder="Ex:&#10;73999991111&#10;71988882222" style="width:100%; height:120px; padding:9px 12px; border:1.5px solid var(--borda); border-radius:8px; font-size:0.85rem; outline:none; resize:vertical; font-family:monospace;"></textarea>
-            </div>
-            <button onclick="adicionarManual()" style="width:100%; padding:11px; background:linear-gradient(135deg, var(--verde), var(--verde-escuro)); color:white; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer;">➕ Adicionar à Lista</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- TABELA -->
-      <div class="card" id="tableCard">
-        <div class="card-header">
-          <div class="icon icon-blue">👥</div>
-          <h2 id="tableTitle">Lista de Clientes</h2>
-        </div>
-
-        <div class="card-body" style="padding-bottom:0;">
-          <div class="stats-bar" id="statsBar" style="display:none;">
-            <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total</div></div>
-            <div class="stat"><div class="stat-num" id="statPendente">0</div><div class="stat-label">Pendentes</div></div>
-            <div class="stat info"><div class="stat-num" id="statEnviado">0</div><div class="stat-label">Enviados</div></div>
-            <div class="stat warn"><div class="stat-num" id="statPulados">0</div><div class="stat-label">Pulados</div></div>
-          </div>
-
-          <div class="filtros" id="filtrosBar" style="display:none; padding:0 0 12px 0;">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar cliente..." oninput="aplicarFiltros()" style="flex:1; min-width:140px;">
-          </div>
-        </div>
-
-        <div style="padding: 0 20px 4px;">
-          <div class="table-wrap" id="tableWrap">
-            <div class="empty-state">
-              <div class="emoji">📋</div>
-              <p>Importe uma planilha Excel para<br>visualizar os clientes aqui</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="pagination" id="paginacaoBar" style="display:none;">
-          <span id="paginacaoInfo">Mostrando 1-50 de 0</span>
-          <div class="page-btns" id="paginacaoBtns"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COLUNA DIREITA -->
-    <div class="side-panel">
-      <!-- MENSAGEM ÚNICA -->
-      <div class="card">
-        <div class="card-header">
-          <div class="icon icon-orange">✉️</div>
-          <h2>Mensagem</h2>
-        </div>
-        <div class="card-body">
-          <textarea class="msg-editor" id="msgEditor" oninput="atualizarPreview()">🚨 *CREDIAMIGO — OPORTUNIDADE EXCLUSIVA* 🚨
-
+<div class="grid">
+<!-- ESQUERDA -->
+<div>
+<div class="card" style="margin-bottom:16px;">
+<div class="card-header">
+<div class="icon icon-green">📂</div>
+<h2>Adicionar Clientes</h2>
+</div>
+<div class="card-body">
+<div style="display:flex; gap:8px; margin-bottom:16px;">
+<button id="abaExcel" onclick="trocarAba('excel')" style="flex:1;padding:9px;border-radius:8px;border:2px solid var(--verde);background:var(--verde);color:white;font-size:0.82rem;font-weight:700;cursor:pointer;">📊 Importar Excel</button>
+<button id="abaManual" onclick="trocarAba('manual')" style="flex:1;padding:9px;border-radius:8px;border:2px solid var(--borda);background:white;color:var(--texto-suave);font-size:0.82rem;font-weight:700;cursor:pointer;">✏️ Adicionar Manual</button>
+</div>
+<div id="painelExcel">
+<div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+<div class="big-icon">📊</div>
+<p><strong>Clique para importar</strong> ou arraste o arquivo Excel aqui</p>
+<p style="margin-top:6px;font-size:0.75rem;">Suporta .xlsx · Colunas: Cliente, Telefone, Valor, Atraso</p>
+</div>
+<input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(event)">
+</div>
+<div id="painelManual" style="display:none;">
+<div style="margin-bottom:10px;">
+<label style="font-size:0.78rem;font-weight:700;color:var(--texto-suave);display:block;margin-bottom:4px;">Telefones (um por linha, com DDD)</label>
+<textarea id="inputTel" placeholder="Ex:&#10;73999991111&#10;71988882222" style="width:100%;height:120px;padding:9px 12px;border:1.5px solid var(--borda);border-radius:8px;font-size:0.85rem;outline:none;resize:vertical;font-family:monospace;" onfocus="this.style.borderColor='var(--verde)'" onblur="this.style.borderColor='var(--borda)'"></textarea>
+</div>
+<button onclick="adicionarManual()" style="width:100%;padding:11px;background:linear-gradient(135deg,var(--verde),var(--verde-escuro));color:white;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;">➕ Adicionar à Lista</button>
+<div id="msgManual" style="display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:0.8rem;"></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="icon icon-blue">👥</div>
+<h2 id="tableTitle">Lista de Clientes</h2>
+<div style="margin-left:auto;">
+<button onclick="exportarLog()" style="padding:6px 12px;background:white;border:1px solid var(--borda);border-radius:6px;font-size:0.75rem;cursor:pointer;">📥 Exportar Log</button>
+</div>
+</div>
+<div class="card-body" style="padding-bottom:0;">
+<div class="stats-bar" id="statsBar" style="display:none;">
+<div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total</div></div>
+<div class="stat"><div class="stat-num" id="statPendente">0</div><div class="stat-label">Pendentes</div></div>
+<div class="stat info"><div class="stat-num" id="statEnviado">0</div><div class="stat-label">Enviados</div></div>
+<div class="stat warn"><div class="stat-num" id="statPulados">0</div><div class="stat-label">Pulados</div></div>
+</div>
+<div class="filtros" id="filtrosBar" style="display:none;padding:0 0 12px 0;">
+<input type="text" id="searchInput" placeholder="🔍 Buscar cliente..." oninput="aplicarFiltros()" style="flex:1;min-width:140px;">
+<select id="filtroStatus" onchange="aplicarFiltros()">
+<option value="">Todos os status</option>
+<option value="pendente">Pendentes</option>
+<option value="enviado">Enviados</option>
+<option value="pulado">Pulados</option>
+</select>
+<button class="btn-filtrar" onclick="selecionarTodosFiltrados()">☑ Selecionar todos</button>
+</div>
+</div>
+<div style="padding:0 20px 4px;">
+<div class="table-wrap" id="tableWrap">
+<div class="empty-state">
+<div class="emoji">📋</div>
+<p>Importe uma planilha Excel para<br>visualizar os clientes aqui</p>
+</div>
+</div>
+</div>
+<div class="pagination" id="paginacaoBar" style="display:none;">
+<span id="paginacaoInfo">Mostrando 1-50 de 0</span>
+<div class="page-btns" id="paginacaoBtns"></div>
+</div>
+</div>
+</div>
+<!-- DIREITA -->
+<div class="side-panel">
+<div class="card">
+<div class="card-header">
+<div class="icon icon-orange">✉️</div>
+<h2>Mensagem</h2>
+</div>
+<div class="card-body">
+<div style="display:flex;gap:6px;margin-bottom:10px;">
+<button onclick="selecionarModelo(0)" id="tabMsg0" style="flex:1;padding:7px 4px;border-radius:8px;border:2px solid var(--verde);background:var(--verde);color:white;font-size:0.75rem;font-weight:700;cursor:pointer;">Modelo 1</button>
+<button onclick="selecionarModelo(1)" id="tabMsg1" style="flex:1;padding:7px 4px;border-radius:8px;border:2px solid var(--borda);background:white;color:var(--texto-suave);font-size:0.75rem;font-weight:700;cursor:pointer;">Modelo 2</button>
+<button onclick="selecionarModelo(2)" id="tabMsg2" style="flex:1;padding:7px 4px;border-radius:8px;border:2px solid
+var(--borda);background:white;color:var(--texto-suave);font-size:0.75rem;font-weight:700;cursor:pointer;">Modelo 3</button>
+<div style="display:flex;align-items:center;gap:5px;margin-left:4px;">
+<label class="toggle" title="Alternar automaticamente entre os 3 modelos">
+<input type="checkbox" id="toggleAlternar" checked>
+<div class="toggle-slider"></div>
+</label>
+<span style="font-size:0.7rem;color:var(--verde);font-weight:700;white-space:nowrap;">Auto</span>
+</div>
+</div>
+<textarea class="msg-editor" id="msgEditor" oninput="atualizarPreview()">🚨 *CREDIAMIGO — OPORTUNIDADE EXCLUSIVA* 🚨
 Olá, *{NOME}*! 👋
-
 Identificamos que você já foi cliente CrediAmigo e gostaríamos de te convidar de volta com condições *especiais* para quem quer investir no próprio negócio.
-
 💰 *Crédito de até R$ 21.000*
 ✅ Juros reduzidos e diferenciados
 📦 Reforço de estoque e capital de giro
 ⏳ Até *60 dias* para começar a pagar*
 ⚡ Análise rápida e atendimento simplificado
-
 Você já tem histórico conosco — isso conta muito! 🤝
-
 📲 Responda *QUERO* e entraremos em contato para apresentar as condições disponíveis para você.
-
 _*Condições sujeitas à análise de crédito._</textarea>
-
-          <div class="vars-hint">
-            <strong>Variáveis disponíveis</strong>:<br>
-            <span class="var-chip" onclick="inserirVar('{NOME}')">{NOME}</span>
-            <span class="var-chip" onclick="inserirVar('{PRIMEIRO_NOME}')">{PRIMEIRO_NOME}</span>
-            <span class="var-chip" onclick="inserirVar('{VALOR}')">{VALOR}</span>
-          </div>
-
-          <div style="margin-top:16px;">
-            <p style="font-size:0.72rem; color:var(--texto-suave); margin-bottom:8px; font-weight:700; text-transform:uppercase;">Pré-visualização</p>
-            <div style="background:#E5DDD5; border-radius:10px; padding:14px;">
-              <div class="preview-bubble" id="previewBubble"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROTEÇÃO ANTI-BAN -->
-      <div class="card">
-        <div class="card-header">
-          <div class="icon icon-green">🛡️</div>
-          <h2>Proteção Anti-Ban</h2>
-        </div>
-        <div class="card-body">
-          <div class="config-row">
-            <div>
-              <label>Intervalo entre envios</label>
-              <small>Pausa de segurança simulada</small>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <input type="range" id="intervaloRange" min="3" max="30" value="8" oninput="document.getElementById('intervaloVal').textContent=this.value+'s'">
-              <span class="range-val" id="intervaloVal">8s</span>
-            </div>
-          </div>
-
-          <div class="config-row" style="margin-bottom:0;">
-            <div>
-              <label>Variação aleatória</label>
-              <small>Evita padrão idêntico de tempo</small>
-            </div>
-            <div class="toggle-wrap">
-              <label class="toggle">
-                <input type="checkbox" id="toggleVariacao" checked>
-                <div class="toggle-slider"></div>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONTROLE DO DISPARO -->
-      <div class="card">
-        <div class="card-header">
-          <div class="icon icon-green">🚀</div>
-          <h2>Controle do Disparo</h2>
-        </div>
-        <div class="card-body">
-          <div class="alert alert-warn" id="alertSemClientes" style="display:block;">⚠️ Importe a planilha para habilitar o disparo.</div>
-
-          <div class="progress-section" id="progressSection">
-            <div class="progress-label">
-              <span id="progressText">Iniciando...</span>
-              <span id="progressPercent">0%</span>
-            </div>
-            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
-            <div class="current-sending" id="currentSending" style="display:none;"></div>
-            <div class="log-box" id="logBox"></div>
-          </div>
-
-          <button class="btn-primary" id="btnIniciar" onclick="iniciarDisparo()" disabled>🚀 Iniciar Disparador</button>
-          
-          <!-- BOTÃO DISPARO UNIVERSAL (INTERCEPTAÇÃO VIA WA.ME) -->
-          <button id="btnProximo" onclick="proximoClienteManual()" style="display:none; width:100%; padding:18px; background:linear-gradient(135deg, #1A73E8, #0D47A1); color:white; border:none; border-radius:10px; font-size:1.1rem; font-weight:800; cursor:pointer; margin-top:8px; box-shadow:0 4px 15px rgba(26,115,232,0.4);">
-            ✅ Enviei! Próximo →
-          </button>
-          
-          <button class="btn-danger" id="btnParar" onclick="pararDisparo()">⛔ Parar Tudo</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
+<div class="vars-hint">
+<strong>Variáveis</strong> (clique para inserir):<br>
+<span class="var-chip" onclick="inserirVar('{NOME}')">{NOME}</span>
+<span class="var-chip" onclick="inserirVar('{PRIMEIRO_NOME}')">{PRIMEIRO_NOME}</span>
+<span class="var-chip" onclick="inserirVar('{VALOR}')">{VALOR}</span>
+<span class="var-chip" onclick="inserirVar('{TELEFONE}')">{TELEFONE}</span>
 </div>
-
-<div style="background: #00875A; color: rgba(255,255,255,0.85); text-align: center; padding: 12px 20px; font-size: 0.72rem; margin-top: 8px;">
-  🛡️ <strong>Disparador CrediAmigo Oficial</strong> — Desenvolvido por <strong>Edno Rotondano Borges</strong> · Coordenador CrediAmigo / Banco do Nordeste · Jequié-BA &nbsp;|&nbsp; © 2026
+<div style="margin-top:16px;">
+<p style="font-size:0.72rem;color:var(--texto-suave);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">Pré-visualização</p>
+<div style="background:#E5DDD5;border-radius:10px;padding:14px;">
+<div class="preview-bubble" id="previewBubble"></div>
+<div class="preview-meta">✓✓ agora</div>
 </div>
-
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="icon icon-green">🛡️</div>
+<h2>Proteção Anti-Ban</h2>
+</div>
+<div class="card-body">
+<div class="config-row">
+<div><label>Intervalo entre envios</label><small>Pausa antes de abrir o próximo</small></div>
+<div style="display:flex;align-items:center;gap:8px;">
+<input type="range" id="intervaloRange" min="3" max="30" value="8" oninput="document.getElementById('intervaloVal').textContent=this.value+'s'">
+<span class="range-val" id="intervaloVal">8s</span>
+</div>
+</div>
+<div class="config-row">
+<div><label>Variação aleatória</label><small>Evita padrão robótico</small></div>
+<div class="toggle-wrap">
+<label class="toggle"><input type="checkbox" id="toggleVariacao" checked><div class="toggle-slider"></div></label>
+<span style="font-size:0.78rem;color:var(--verde);font-weight:700;">Ativo</span>
+</div>
+</div>
+<div class="config-row" style="margin-bottom:0;">
+<div><label>Alternar modelos</label><small>Rotaciona entre os 3 templates</small></div>
+<div class="toggle-wrap">
+<label class="toggle"><input type="checkbox" id="togglePersonalizar" checked><div class="toggle-slider"></div></label>
+<span style="font-size:0.78rem;color:var(--verde);font-weight:700;">Ativo</span>
+</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="icon icon-green">🚀</div>
+<h2>Controle do Disparo</h2>
+</div>
+<div class="card-body">
+<div class="alert alert-warn" id="alertSemClientes" style="display:block;">⚠️ Importe a planilha para habilitar o disparo.</div>
+<div class="alert alert-info" id="alertInfo" style="display:none;"></div>
+<div class="alert alert-success" id="alertSuccess" style="display:none;"></div>
+<div class="progress-section" id="progressSection">
+<div class="progress-label">
+<span id="progressText">Iniciando...</span>
+<span id="progressPercent">0%</span>
+</div>
+<div class="progress-bar-wrap">
+<div class="progress-bar-fill" id="progressFill"></div>
+</div>
+<div class="clipboard-hint" id="clipboardHint">
+📋 <strong>Copie a mensagem manualmente</strong> — seu navegador não permite cópia automática fora de HTTPS.
+</div>
+<div class="log-box" id="logBox"></div>
+</div>
+<!-- PAINEL DE AÇÃO: aparece após abrir o WhatsApp -->
+<div class="action-panel" id="actionPanel">
+<div class="action-nome" id="actionNome">Enviando para</div>
+<div class="action-tel" id="actionTel">—</div>
+<div class="action-btns">
+<button class="btn-enviado" onclick="confirmarEnviado()">✅ Enviado!</button>
+<button class="btn-pular" onclick="pularAtual()">⏭ Pular</button>
+</div>
+</div>
+<!-- COUNTDOWN: intervalo antes do próximo -->
+<div class="countdown-bar" id="countdownBar">
+<span id="countdownText">Aguardando próximo...</span>
+<div class="countdown-fill-wrap">
+<div class="countdown-fill" id="countdownFill" style="width:100%"></div>
+</div>
+</div>
+<button class="btn-primary" id="btnIniciar" onclick="iniciarDisparo()" disabled>
+<span>🚀</span> Iniciar Disparador
+</button>
+<button class="btn-secondary" id="btnPausar" onclick="pausarDisparo()" style="display:none;">⏸ Pausar</button>
+<button class="btn-secondary" id="btnResumir" onclick="resumirDisparo()" style="display:none;">▶️ Continuar</button>
+<button class="btn-danger" id="btnParar" onclick="pararDisparo()">⛔ Parar Tudo</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div style="background:#00875A;color:rgba(255,255,255,0.85);text-align:center;padding:12px 20px;font-size:0.72rem;letter-spacing:0.3px;margin-top:8px;">
+🛡️ <strong style="color:white;">Disparador CrediAmigo Oficial</strong> — Desenvolvido por <strong style="color:#FFD700;">Edno Rotondano Borges</strong> · Coordenador CrediAmigo / Banco do Nordeste · Jequié-BA &nbsp;|&nbsp; © 2026
+</div>
 <script>
+// ===== MODELOS =====
+const MODELOS = [
+`🚨 *CREDIAMIGO — OPORTUNIDADE EXCLUSIVA* 🚨
+Olá, *{NOME}*! 👋
+Identificamos que você já foi cliente CrediAmigo e gostaríamos de te convidar de volta com condições *especiais* para quem quer investir no próprio negócio.
+💰 *Crédito de até R$ 21.000*
+✅ Juros reduzidos e diferenciados
+📦 Reforço de estoque e capital de giro
+⏳ Até *60 dias* para começar a pagar*
+⚡ Análise rápida e atendimento simplificado
+Você já tem histórico conosco — isso conta muito! 🤝
+📲 Responda *QUERO* e entraremos em contato para apresentar as condições disponíveis para você.
+_*Condições sujeitas à análise de crédito._`,
+`👋 *{NOME}*, sentimos a sua falta no *CrediAmigo!*
+Você já conhece o nosso programa e sabe que o *Banco do Nordeste* está sempre ao lado de quem empreende. 💚
+Por isso, preparamos uma *oferta exclusiva para ex-clientes* voltarem a crescer com a gente:
+💰 Crédito de até *R$ 21.000* com juros especiais
+⏳ Até *60 dias* para começar a pagar*
+📦 Ideal para estoque, capital de giro e muito mais
+⚡ Atendimento rápido e personalizado
+Não deixe o seu negócio esperando! Responda *VOLTAR* agora mesmo e nossa equipe entra em contato. 🚀
+_*Condições sujeitas à análise de crédito._`,
+`🔔 *Aviso importante para você, {NOME}!*
+O *CrediAmigo — Banco do Nordeste* está com uma ação especial de retorno e *seu nome está na lista de ex-clientes selecionados.* 🎯
+Essa é a sua chance de retomar o fôlego do seu negócio:
+✔️
+*Juros reduzidos* para quem já foi cliente
+✔️
+Crédito de até *R$ 21.000*
+✔️
+Até *60 dias* para a 1ª parcela*
+✔️
+Processo simples, sem burocracia
+⏳ *Essa condição é por tempo limitado!*
+📲 Responda *SIM* agora e nossa equipe vai te atender com prioridade!
+_*Condições sujeitas à análise de crédito._`
+];
+let modeloAtual = 0;
+let contadorModelo = 0;
 let clientes = [];
 let clientesFiltrados = [];
 let paginaAtual = 1;
 const POR_PAGINA = 50;
 let disparando = false;
+let pausado = false;
 let indiceAtual = 0;
 let totalEnviados = 0;
-let intervaloTimer = null;
-
+let totalPulados = 0;
+let countdownTimer = null;
+let countdownSegundos = 0;
+let aguardandoConfirmacao = false;
+// ===== MODELOS =====
+function selecionarModelo(idx) {
+modeloAtual = idx;
+document.getElementById('msgEditor').value = MODELOS[idx];
+atualizarPreview();
+[0,1,2].forEach(i => {
+const btn = document.getElementById('tabMsg'+i);
+btn.style.background = i===idx ? 'var(--verde)' : 'white';
+btn.style.borderColor = i===idx ? 'var(--verde)' : 'var(--borda)';
+btn.style.color = i===idx ? 'white' : 'var(--texto-suave)';
+});
+}
+function getMensagemAtual(cliente) {
+const alternar = document.getElementById('toggleAlternar').checked;
+const idx = alternar ? (contadorModelo % 3) : modeloAtual;
+if (alternar) contadorModelo++;
+return aplicarVariaveis(MODELOS[idx], cliente);
+}
+// ===== ABAS =====
 function trocarAba(aba) {
-  const isExcel = aba === 'excel';
-  document.getElementById('painelExcel').style.display = isExcel ? 'block' : 'none';
-  document.getElementById('painelManual').style.display = isExcel ? 'none' : 'block';
-  document.getElementById('abaExcel').style.background = isExcel ? 'var(--verde)' : 'white';
-  document.getElementById('abaManual').style.background = !isExcel ? 'var(--verde)' : 'white';
+const isExcel = aba === 'excel';
+document.getElementById('painelExcel').style.display = isExcel ? 'block' : 'none';
+document.getElementById('painelManual').style.display = isExcel ? 'none' : 'block';
+const bE = document.getElementById('abaExcel');
+const bM = document.getElementById('abaManual');
+bE.style.background = isExcel ? 'var(--verde)' : 'white';
+bE.style.borderColor= isExcel ? 'var(--verde)' : 'var(--borda)';
+bE.style.color = isExcel ? 'white' : 'var(--texto-suave)';
+bM.style.background = !isExcel ? 'var(--verde)' : 'white';
+bM.style.borderColor= !isExcel ? 'var(--verde)' : 'var(--borda)';
+bM.style.color = !isExcel ? 'white' : 'var(--texto-suave)';
 }
-
+// ===== MANUAL =====
 function adicionarManual() {
-  const raw = document.getElementById('inputTel').value.trim();
-  if (!raw) return;
-  const linhas = raw.split('\n').map(l => l.trim().replace(/\D/g, '')).filter(l => l.length >= 10);
-  
-  linhas.forEach(tel => {
-    const telFinal = tel.startsWith('55') ? tel : '55' + tel;
-    if (!clientes.some(c => c.telefone === telFinal)) {
-      clientes.push({ id: clientes.length, nome: '__MANUAL__', telefone: telFinal, valor: 0, atraso: 0, status: 'pendente' });
-    }
-  });
-
-  clientesFiltrados = [...clientes];
-  document.getElementById('inputTel').value = '';
-  liberarInterface();
+const raw = document.getElementById('inputTel').value.trim();
+const msg = document.getElementById('msgManual');
+if (!raw) { mostrarMsgManual('⚠️ Cole pelo menos um número!', false); return; }
+const linhas = raw.split('\n').map(l => l.trim().replace(/\D/g,'')).filter(l => l.length >= 10);
+if (!linhas.length) { mostrarMsgManual('⚠️ Nenhum número válido. Use DDD + número.', false); return; }
+let add = 0, dup = 0;
+linhas.forEach(tel => {
+const t = tel.startsWith('55') ? tel : '55'+tel;
+if (clientes.some(c => c.telefone === t)) { dup++; return; }
+clientes.push({ id: clientes.length, nome: '__MANUAL__', telefone: t, valor: 0, atraso: 0, status: 'pendente' });
+add++;
+});
+clientesFiltrados = [...clientes];
+document.getElementById('inputTel').value = '';
+let txt = `✅ ${add} número(s) adicionado(s)!`;
+if (dup) txt += ` (${dup} duplicado(s) ignorado(s))`;
+txt += ` · Total: ${clientes.length}`;
+mostrarMsgManual(txt, true);
+habilitarDisparo();
+atualizarStats();
+renderizarTabela();
 }
-
-function handleFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-
-      const novos = rows.map((row, i) => {
-        const keys = Object.keys(row);
-        const colCliente = keys.find(k => /cliente|nome/i.test(k)) || keys[0];
-        const colTelefone = keys.find(k => /tel|fone|cel|whats/i.test(k)) || keys[1];
-        const colValor = keys.find(k => /valor/i.test(k)) || keys[2];
-        const colAtraso = keys.find(k => /atraso/i.test(k)) || keys[3];
-
-        let tel = String(row[colTelefone] || '').replace(/\D/g,'');
-        if (tel.length <= 11 && !tel.startsWith('55')) tel = '55' + tel;
-
-        return {
-          id: clientes.length + i,
-          nome: String(row[colCliente] || '').trim(),
-          telefone: tel,
-          valor: Number(row[colValor] || 0),
-          atraso: Number(row[colAtraso] || 0),
-          status: 'pendente'
-        };
-      }).filter(c => c.nome && c.telefone.length >= 11);
-
-      clientes = [...clientes, ...novos];
-      clientesFiltrados = [...clientes];
-      liberarInterface();
-      adicionarLog(`✅ ${novos.length} clientes carregados.`, 'ok');
-    } catch(err) { alert('Erro ao processar planilha.'); }
-  };
-  reader.readAsArrayBuffer(file);
+function mostrarMsgManual(txt, ok) {
+const el = document.getElementById('msgManual');
+el.style.display = 'block';
+el.style.background = ok ? 'var(--verde-claro)' : '#FFEBEE';
+el.style.color = ok ? 'var(--verde-escuro)' : 'var(--vermelho)';
+el.textContent = txt;
+setTimeout(() => el.style.display = 'none', 4000);
 }
-
-function liberarInterface() {
-  document.getElementById('statsBar').style.display = 'grid';
-  document.getElementById('filtrosBar').style.display = 'flex';
-  document.getElementById('paginacaoBar').style.display = 'flex';
-  document.getElementById('alertSemClientes').style.display = 'none';
-  document.getElementById('btnIniciar').disabled = false;
-  atualizarStats();
-  renderizarTabela();
+// ===== EXCEL =====
+function handleFile(e) {
+const f = e.target.files[0];
+if (f) processarArquivo(f);
 }
-
+document.getElementById('uploadZone').addEventListener('dragover', e => { e.preventDefault(); e.currentTarget.classList.add('dragover'); });
+document.getElementById('uploadZone').addEventListener('dragleave', e => e.currentTarget.classList.remove('dragover'));
+document.getElementById('uploadZone').addEventListener('drop', e => {
+e.preventDefault(); e.currentTarget.classList.remove('dragover');
+if (e.dataTransfer.files[0]) processarArquivo(e.dataTransfer.files[0]);
+});
+function processarArquivo(file) {
+const reader = new FileReader();
+reader.onload = function(e) {
+try {
+const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: '' });
+const novos = rows.map((row, i) => {
+const keys = Object.keys(row);
+const cC = keys.find(k => /cliente|nome/i.test(k)) || keys[0];
+const cT = keys.find(k => /tel|fone|cel|whats/i.test(k))|| keys[1];
+const cV = keys.find(k => /valor/i.test(k)) || keys[2];
+const cA = keys.find(k => /atraso/i.test(k)) || keys[3];
+let tel = String(row[cT]||'').replace(/\D/g,'');
+if (tel.length===11 && !tel.startsWith('55')) tel='55'+tel;
+if (tel.length===10 && !tel.startsWith('55')) tel='55'+tel;
+return { id: clientes.length+i, nome: String(row[cC]||'').trim(), telefone: tel, valor: Number(row[cV]||0), atraso: Number(row[cA]||0), status: 'pendente' };
+}).filter(c => c.nome && c.telefone.length >= 12);
+clientes = [...clientes, ...novos];
+clientesFiltrados = [...clientes];
+paginaAtual = 1;
+atualizarStats();
+renderizarTabela();
+habilitarDisparo();
+document.getElementById('fileInput').value = '';
+adicionarLog(`✅ ${novos.length} clientes importados! Total: ${clientes.length}`, 'ok');
+mostrarInfo(`✅ ${novos.length} clientes importados!`);
+} catch(err) { mostrarInfo('❌ Erro ao ler planilha. Verifique o arquivo.'); }
+};
+reader.readAsArrayBuffer(file);
+}
+function habilitarDisparo() {
+document.getElementById('statsBar').style.display = 'grid';
+document.getElementById('filtrosBar').style.display = 'flex';
+document.getElementById('paginacaoBar').style.display = 'flex';
+document.getElementById('alertSemClientes').style.display = 'none';
+document.getElementById('btnIniciar').disabled = false;
+}
+// ===== TABELA =====
 function renderizarTabela() {
-  const inicio = (paginaAtual - 1) * POR_PAGINA;
-  const fim = Math.min(inicio + POR_PAGINA, clientesFiltrados.length);
-  const paginados = clientesFiltrados.slice(inicio, fim);
-
-  let html = '<table><thead><tr><th>#</th><th>Cliente</th><th>Telefone</th><th>Valor</th><th>Status</th></tr></thead><tbody>';
-  paginados.forEach((c, i) => {
-    const num = inicio + i + 1;
-    const sBadge = c.status === 'enviado' ? '<span class="badge badge-sent">✓ Enviado</span>' : '<span class="badge badge-pending">● Pendente</span>';
-    html += `<tr class="${c.status === 'enviado' ? 'enviado' : ''}"><td>${num}</td><td><strong>${c.nome}</strong></td><td>${c.telefone}</td><td>R$ ${c.valor}</td><td>${sBadge}</td></tr>`;
-  });
-  html += '</tbody></table>';
-  document.getElementById('tableWrap').innerHTML = html;
+const ini = (paginaAtual-1)*POR_PAGINA;
+const fim = Math.min(ini+POR_PAGINA, clientesFiltrados.length);
+const pag = clientesFiltrados.slice(ini, fim);
+document.getElementById('tableTitle').textContent = `Lista de Clientes (${clientesFiltrados.length} de ${clientes.length})`;
+let html = `<table><thead><tr><th>#</th><th>Cliente</th><th>Telefone</th><th>Valor</th><th>Atraso</th><th>Status</th></tr></thead><tbody>`;
+pag.forEach((c,i) => {
+const n = ini+i+1;
+const isAtual = disparando && c.id === (clientes[indiceAtual]?.id);
+const sb = c.status==='enviado' ? '<span class="badge badge-sent">✓ Enviado</span>'
+: c.status==='pulado' ? '<span class="badge badge-skip">↷ Pulado</span>'
+: isAtual ? '<span class="badge badge-current">⏳ Atual</span>'
+: '<span class="badge badge-pending">● Pendente</span>';
+const ab = c.atraso===0 ? '<span class="badge badge-ok">Em dia</span>'
+: c.atraso<=2 ? `<span class="badge badge-warn">${c.atraso}m</span>`
+: `<span class="badge badge-danger">${c.atraso}m</span>`;
+const rc = c.status==='enviado' ? 'enviado' : isAtual ? 'enviando' : '';
+html += `<tr class="${rc}"><td style="color:var(--texto-suave);font-size:0.75rem;">${n}</td><td><strong>${c.nome!=='__MANUAL__'?c.nome:'—'}</strong></td><td style="font-family:monospace;font-size:0.8rem;">${formatarTel(c.telefone)}</td><td
+style="font-weight:600;color:var(--verde);">R$ ${c.valor.toLocaleString('pt-BR')}</td><td>${ab}</td><td>${sb}</td></tr>`;
+});
+html += '</tbody></table>';
+document.getElementById('tableWrap').innerHTML = html;
+const tp = Math.ceil(clientesFiltrados.length/POR_PAGINA);
+document.getElementById('paginacaoInfo').textContent = `Mostrando ${ini+1}–${fim} de ${clientesFiltrados.length}`;
+let ph = '';
+if (paginaAtual>1) ph += `<button onclick="irParaPagina(${paginaAtual-1})">‹</button>`;
+for (let p=Math.max(1,paginaAtual-2); p<=Math.min(tp,paginaAtual+2); p++)
+ph += `<button class="${p===paginaAtual?'active':''}" onclick="irParaPagina(${p})">${p}</button>`;
+if (paginaAtual<tp) ph += `<button onclick="irParaPagina(${paginaAtual+1})">›</button>`;
+document.getElementById('paginacaoBtns').innerHTML = ph;
 }
-
+function irParaPagina(p) { paginaAtual=p; renderizarTabela(); }
 function aplicarFiltros() {
-  const busca = document.getElementById('searchInput').value.toLowerCase();
-  clientesFiltrados = clientes.filter(c => {
-    if (busca && !c.nome.toLowerCase().includes(busca) && !c.telefone.includes(busca)) return false;
-    return true;
-  });
-  paginaAtual = 1;
-  renderizarTabela();
+const busca = document.getElementById('searchInput').value.toLowerCase();
+const status = document.getElementById('filtroStatus').value;
+clientesFiltrados = clientes.filter(c => {
+if (busca && !c.nome.toLowerCase().includes(busca) && !c.telefone.includes(busca)) return false;
+if (status && c.status!==status) return false;
+return true;
+});
+paginaAtual=1; renderizarTabela();
 }
-
+function selecionarTodosFiltrados() { mostrarInfo(`${clientesFiltrados.length} clientes filtrados.`); }
 function atualizarStats() {
-  const total = clientes.length;
-  const enviados = clientes.filter(c => c.status === 'enviado').length;
-  document.getElementById('statTotal').textContent = total;
-  document.getElementById('statPendente').textContent = total - enviados;
-  document.getElementById('statEnviado').textContent = enviados;
+const env = clientes.filter(c=>c.status==='enviado').length;
+const pul = clientes.filter(c=>c.status==='pulado').length;
+document.getElementById('statTotal').textContent = clientes.length;
+document.getElementById('statPendente').textContent = clientes.length-env-pul;
+document.getElementById('statEnviado').textContent = env;
+document.getElementById('statPulados').textContent = pul;
 }
-
-function aplicarVariaveis(msg, cliente) {
-  const primeiroNome = cliente.nome === '__MANUAL__' ? 'Cliente' : cliente.nome.split(' ')[0];
-  return msg.replace(/\{NOME\}/g, cliente.nome).replace(/\{PRIMEIRO_NOME\}/g, primeiroNome).replace(/\{VALOR\}/g, `R$ ${cliente.valor}`);
-}
-
+// ===== MENSAGEM =====
 function atualizarPreview() {
-  const msg = document.getElementById('msgEditor').value;
-  const exemplo = clientes[0] || { nome: 'Maria Silva', valor: 15000, telefone: '5573999999999' };
-  document.getElementById('previewBubble').textContent = aplicarVariaveis(msg, ejemplo);
+const msg = document.getElementById('msgEditor').value;
+const ex = clientes[0] || { nome:'Maria Santos', telefone:'5573999000000', valor:15000 };
+document.getElementById('previewBubble').textContent = aplicarVariaveis(msg, ex);
 }
-
+function aplicarVariaveis(msg, cliente) {
+const manual = cliente.nome==='__MANUAL__';
+let r = msg;
+if (manual) {
+r = r.replace(/Olá,\s*\*?\{NOME\}\*?!?\s*/gi,'Olá! ')
+.replace(/👋\s*\*?\{NOME\}\*?,?\s*/gi,'👋 ')
+.replace(/🔔\s*\*Aviso importante para você,\s*\{NOME\}!\*/gi,'🔔 *Aviso importante para você!*');
+}
+return r
+.replace(/\{NOME\}/g, manual?'':cliente.nome)
+.replace(/\{PRIMEIRO_NOME\}/g, manual?'':cliente.nome.split(' ')[0])
+.replace(/\{VALOR\}/g, `R$ ${Number(cliente.valor).toLocaleString('pt-BR')}`)
+.replace(/\{TELEFONE\}/g, formatarTel(cliente.telefone));
+}
 function inserirVar(v) {
-  const ta = document.getElementById('msgEditor');
-  ta.value += v;
-  atualizarPreview();
+const ta = document.getElementById('msgEditor');
+const p = ta.selectionStart;
+ta.value = ta.value.substring(0,p)+v+ta.value.substring(p);
+ta.setSelectionRange(p+v.length,p+v.length);
+ta.focus(); atualizarPreview();
 }
-
-// ===== MOTOR DE DISPARO UNIVERSAL (ANDROID + IOS) =====
+// ===== CLIPBOARD =====
+function copiarMensagem(msg) {
+if (navigator.clipboard && window.isSecureContext) {
+navigator.clipboard.writeText(msg).catch(() => copiarFallback(msg));
+document.getElementById('clipboardHint').style.display = 'none';
+} else {
+copiarFallback(msg);
+}
+}
+function copiarFallback(msg) {
+try {
+const ta = document.createElement('textarea');
+ta.value = msg; ta.style.cssText = 'position:fixed;opacity:0';
+document.body.appendChild(ta); ta.focus(); ta.select();
+document.execCommand('copy');
+document.body.removeChild(ta);
+document.getElementById('clipboardHint').style.display = 'none';
+} catch(e) {
+document.getElementById('clipboardHint').style.display = 'block';
+}
+}
+// ===== DISPARO =====
 function iniciarDisparo() {
-  disparando = true;
-  indiceAtual = clientes.findIndex(c => c.status === 'pendente');
-  document.getElementById('btnIniciar').style.display = 'none';
-  document.getElementById('btnParar').style.display = 'block';
-  document.getElementById('progressSection').style.display = 'block';
-  document.getElementById('statusBadge').textContent = '🟢 Disparando';
-  processarProximo();
+if (!clientes.length) return;
+const pend = clientes.filter(c=>c.status==='pendente');
+if (!pend.length) { mostrarInfo('✅ Todos os clientes já foram processados!'); return; }
+disparando = true; pausado = false; contadorModelo = 0;
+indiceAtual = clientes.findIndex(c=>c.status==='pendente');
+document.getElementById('btnIniciar').style.display = 'none';
+document.getElementById('btnParar').style.display = 'block';
+document.getElementById('btnPausar').style.display = 'block';
+document.getElementById('progressSection').style.display = 'block';
+document.getElementById('statusBadge').textContent = '🟢 Disparando';
+adicionarLog(`🚀 Disparo iniciado — ${pend.length} clientes pendentes`, 'ok');
+abrirProximo();
 }
-
-function processarProximo() {
-  if (!disparando) return;
-  if (indiceAtual >= clientes.length) { finalizarDisparo(); return; }
-
-  const cliente = clientes[indiceAtual];
-  if (cliente.status !== 'pendente') { indiceAtual++; processarProximo(); return; }
-
-  const msg = aplicarVariaveis(document.getElementById('msgEditor').value, cliente);
-  
-  // LINK UNIVERSAL CORRIGIDO: wa.me funciona perfeitamente abrindo direto o App no Android, iOS e Computador
-  const urlUniversal = `https://wa.me/${cliente.telefone}?text=${encodeURIComponent(msg)}`;
-
-  document.getElementById('currentSending').style.display = 'block';
-  document.getElementById('currentSending').textContent = `⏳ Enviando para: ${cliente.nome}`;
-  adicionarLog(`📤 Abrindo conversa de: ${cliente.telefone}`, 'ok');
-
-  // Abre em uma nova aba que força o sistema operacional a redirecionar para o app nativo do WhatsApp
-  window.open(urlUniversal, '_blank');
-
-  // Exibe o botão de controle nativo
-  document.getElementById('btnProximo').style.display = 'block';
+function abrirProximo() {
+if (!disparando || pausado) return;
+// Pula clientes já processados
+while (indiceAtual < clientes.length && clientes[indiceAtual].status !== 'pendente') indiceAtual++;
+if (indiceAtual >= clientes.length) { finalizarDisparo(); return; }
+const cliente = clientes[indiceAtual];
+const msg = getMensagemAtual(cliente);
+const nomeExibir = cliente.nome !== '__MANUAL__' ? cliente.nome : formatarTel(cliente.telefone);
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const urlWa = isMobile
+? `whatsapp://send?phone=${cliente.telefone}&text=${encodeURIComponent(msg)}`
+: `https://api.whatsapp.com/send?phone=${cliente.telefone}&text=${encodeURIComponent(msg)}`;
+atualizarProgresso();
+copiarMensagem(msg);
+// Abre WhatsApp
+if (isMobile) {
+window.location.href = urlWa;
+} else {
+window.open(urlWa, '_blank');
 }
-
-function proximoClienteManual() {
-  const cliente = clientes[indiceAtual];
-  if (!cliente) return;
-
-  cliente.status = 'enviado';
-  totalEnviados++;
-  atualizarStats();
-  renderizarTabela();
-  indiceAtual++;
-
-  document.getElementById('btnProximo').style.display = 'none';
-
-  const baseTempo = parseInt(document.getElementById('intervaloRange').value) * 1000;
-  const variacao = document.getElementById('toggleVariacao').checked ? (Math.random() * 2000) : 0;
-
-  intervaloTimer = setTimeout(processarProximo, baseTempo + variacao);
+adicionarLog(`📤 Aberto: ${nomeExibir}`, 'ok');
+// Mostra painel de confirmação
+document.getElementById('actionNome').textContent = cliente.nome!=='__MANUAL__' ? cliente.nome : 'Contato';
+document.getElementById('actionTel').textContent = formatarTel(cliente.telefone);
+document.getElementById('actionPanel').classList.add('visible');
+document.getElementById('countdownBar').classList.remove('visible');
+aguardandoConfirmacao = true;
 }
-
-function finalizarDisparo() {
-  disparando = false;
-  document.getElementById('statusBadge').textContent = '✅ Concluído';
-  document.getElementById('btnProximo').style.display = 'none';
-  alert('🎉 Campanha do CrediAmigo finalizada com sucesso!');
+function confirmarEnviado() {
+if (!aguardandoConfirmacao) return;
+aguardandoConfirmacao = false;
+const cliente = clientes[indiceAtual];
+if (!cliente) return;
+cliente.status = 'enviado';
+totalEnviados++;
+atualizarStats();
+renderizarTabela();
+adicionarLog(`✅ Enviado: ${cliente.nome!=='__MANUAL__'?cliente.nome:formatarTel(cliente.telefone)}`, 'ok');
+indiceAtual++;
+document.getElementById('actionPanel').classList.remove('visible');
+iniciarCountdown();
 }
-
+function pularAtual() {
+if (!aguardandoConfirmacao) return;
+aguardandoConfirmacao = false;
+const cliente = clientes[indiceAtual];
+if (!cliente) return;
+cliente.status = 'pulado';
+totalPulados++;
+atualizarStats();
+renderizarTabela();
+adicionarLog(`⏭ Pulado: ${cliente.nome!=='__MANUAL__'?cliente.nome:formatarTel(cliente.telefone)}`, 'warn');
+indiceAtual++;
+document.getElementById('actionPanel').classList.remove('visible');
+// Pular vai direto, sem esperar intervalo
+abrirProximo();
+}
+function iniciarCountdown() {
+const base = parseInt(document.getElementById('intervaloRange').value);
+const variacao = document.getElementById('toggleVariacao').checked;
+const delta = variacao ? Math.round(base * 0.4 * (Math.random()*2-1)) : 0;
+countdownSegundos = Math.max(3, base + delta);
+const bar = document.getElementById('countdownBar');
+const fill = document.getElementById('countdownFill');
+const txt = document.getElementById('countdownText');
+bar.classList.add('visible');
+fill.style.transition = 'none';
+fill.style.width = '100%';
+let restante = countdownSegundos;
+txt.textContent = `⏱ Próximo em ${restante}s...`;
+// Anima a barra
+setTimeout(() => {
+fill.style.transition = `width ${countdownSegundos}s linear`;
+fill.style.width = '0%';
+}, 50);
+countdownTimer = setInterval(() => {
+restante--;
+txt.textContent = restante > 0 ? `⏱ Próximo em ${restante}s...` : '🚀 Abrindo...';
+if (restante <= 0) {
+clearInterval(countdownTimer);
+bar.classList.remove('visible');
+if (disparando && !pausado) abrirProximo();
+}
+}, 1000);
+}
+function pausarDisparo() {
+pausado = true;
+clearInterval(countdownTimer);
+aguardandoConfirmacao = false;
+document.getElementById('btnPausar').style.display = 'none';
+document.getElementById('btnResumir').style.display = 'block';
+document.getElementById('actionPanel').classList.remove('visible');
+document.getElementById('countdownBar').classList.remove('visible');
+document.getElementById('statusBadge').textContent = '🟡 Pausado';
+adicionarLog('⏸ Disparo pausado', 'warn');
+}
+function resumirDisparo() {
+pausado = false;
+document.getElementById('btnPausar').style.display = 'block';
+document.getElementById('btnResumir').style.display = 'none';
+document.getElementById('statusBadge').textContent = '🟢 Disparando';
+adicionarLog('▶️ Disparo retomado', 'ok');
+abrirProximo();
+}
 function pararDisparo() {
-  disparando = false;
-  clearTimeout(intervaloTimer);
-  document.getElementById('btnIniciar').style.display = 'block';
-  document.getElementById('btnProximo').style.display = 'none';
-  document.getElementById('statusBadge').textContent = '🔴 Parado';
+disparando = false; pausado = false; aguardandoConfirmacao = false;
+clearInterval(countdownTimer);
+document.getElementById('btnIniciar').style.display = 'block';
+document.getElementById('btnPausar').style.display = 'none';
+document.getElementById('btnResumir').style.display = 'none';
+document.getElementById('btnParar').style.display = 'none';
+document.getElementById('actionPanel').classList.remove('visible');
+document.getElementById('countdownBar').classList.remove('visible');
+document.getElementById('statusBadge').textContent = '🔴 Parado';
+document.getElementById('clipboardHint').style.display = 'none';
+adicionarLog('⛔ Disparo interrompido', 'err');
+mostrarInfo(`Enviados: ${totalEnviados} | Pulados: ${totalPulados}`);
 }
-
-function adicionarLog(msg, tipo) {
-  const box = document.getElementById('logBox');
-  box.innerHTML += `<div class="log-line log-${tipo}">${msg}</div>`;
-  box.scrollTop = box.scrollHeight;
+function finalizarDisparo() {
+disparando = false;
+document.getElementById('btnIniciar').style.display = 'block';
+document.getElementById('btnPausar').style.display = 'none';
+document.getElementById('btnParar').style.display = 'none';
+document.getElementById('actionPanel').classList.remove('visible');
+document.getElementById('countdownBar').classList.remove('visible');
+document.getElementById('statusBadge').textContent = '✅ Concluído';
+document.getElementById('alertSuccess').style.display = 'block';
+document.getElementById('alertSuccess').textContent = `🎉 Campanha concluída! ${totalEnviados} enviados, ${totalPulados} pulados.`;
+adicionarLog(`🎉 Finalizado! Enviados: ${totalEnviados} | Pulados: ${totalPulados}`, 'ok');
 }
-
+function atualizarProgresso() {
+const total = clientes.length;
+const proc = clientes.filter(c=>c.status!=='pendente').length;
+const pct = total > 0 ? Math.round(proc/total*100) : 0;
+document.getElementById('progressFill').style.width = pct+'%';
+document.getElementById('progressPercent').textContent = pct+'%';
+document.getElementById('progressText').textContent = `${proc} de ${total} processados`;
+}
+function adicionarLog(msg, tipo='') {
+const box = document.getElementById('logBox');
+const div = document.createElement('div');
+div.className = `log-line log-${tipo}`;
+div.textContent = `[${new Date().toLocaleTimeString('pt-BR')}] ${msg}`;
+box.appendChild(div);
+box.scrollTop = box.scrollHeight;
+}
+function exportarLog() {
+const rows = [['Nome','Telefone','Valor','Atraso','Status']];
+clientes.forEach(c => rows.push([c.nome,c.telefone,c.valor,c.atraso,c.status]));
+const ws = XLSX.utils.aoa_to_sheet(rows);
+const wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, ws, 'Relatório');
+XLSX.writeFile(wb, `crediamigo_log_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.xlsx`);
+}
+function formatarTel(tel) {
+const t = String(tel).replace(/\D/g,'');
+if (t.startsWith('55') && t.length>=12) {
+const l = t.slice(2);
+if (l.length===11) return `(${l.slice(0,2)}) ${l.slice(2,7)}-${l.slice(7)}`;
+if (l.length===10) return `(${l.slice(0,2)}) ${l.slice(2,6)}-${l.slice(6)}`;
+}
+return t;
+}
+function mostrarInfo(msg) {
+const el = document.getElementById('alertInfo');
+el.textContent = msg; el.style.display = 'block';
+setTimeout(()=>el.style.display='none', 4000);
+}
 atualizarPreview();
 </script>
 </body>
 </html>
-
